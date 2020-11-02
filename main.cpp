@@ -4,128 +4,33 @@
 #include <cmath>
 
 using namespace std;
-void lectura (string& nombre,int,int,int opcion);
+void lectura (string& nombre);
 void codificacion (string& texto,int metodo ,int semilla) ;
 void decodificacion (string& texto, int metodo, int semilla);
+void binario_caracter (string& texto);
+void caracter_binario (string& texto);
+
 
 int main()
 {
-    int opcion = 1;
-    while (opcion !=0)
-    {
-        cout << " ***** Parctica 3 ***** \n \n";
-        cout << "1. Codificacion metodo 1 y 2. \n";
-        cout << "2. Decodificacion. \n";
-        cout << "3. Aplicacion de banco. \n\n";
-        cout << "0. Precione 0 para salir.\n";
 
-        cout << "Ingrese opcion.\n";
-        cin >> opcion;
-
-        switch (opcion)
-        {
-        case 1:
-            system("cls"); //limpiar terminal
-            int opc2=1;
-            while (opc2!=0) {
-                cout << "Ingrese nombre de archivo.txt a codificar."<<endl;
-                string nombre; cin>>nombre;
-                int metodo,semilla;
-                cout << "Ingrese numero de particiones de las cadenas:"<<endl;
-                cin>>semilla;
-                cout << "1.Metodo de codificacion 1."<<endl;
-                cout << "2.Metodo de codificacion 2."<<endl;
-                cout << "0.Precione 0 para salir.\n"<<endl;
-                cout << "Ingrese metodo de codificacion:"<<endl;
-                cin >>metodo;
-                lectura(nombre,metodo,semilla,opcion);
-            }
-            break ;
-
-            //FALTA DECODIFICACION Y ARRREGLAR MENU
-
-        }//switch
-    }//while opcion
-    return 0;
 }
 
-void lectura ( string& pun_nombre,int metodo ,int semilla , int opcion)
+
+
+
+void lectura (string& nombre)
 {
-    /* lee archivo, crea string texto y copia en el todo el archivo, texto pasa a binario,
-         *
-         *
-         */
-
-
     ifstream fin; //leer un archivo
-    string codificado="",texto = "";
-    char letra;
-
+    string frase,texto = "";
     try
     {
-        fin.open(pun_nombre.c_str()); //Abre un archivo para lectura   fin.open(pun_nombre.c_str());
-        if (!fin.fail()){
-            fin.get(letra);}
-
-        if (opcion == 1){
-            while (!fin.eof()){// convierte texto a binario
-                int num = letra; string copia = "";
-                for (int j = 7;j>=0;j--){
-                    if (num >= pow(2,j)){
-                        num -= pow (2,j);
-                        copia = copia + "1";
-                    }
-                    else
-                        copia = copia +"0";
-                }
-                string linea = "";
-                linea = linea+copia;
-                fin.get(letra);
-                texto = texto + linea;
-            }
-        }//opcion == 1
-
-        if (opcion == 2)  { // binario a caracter
-
-            while (!fin.eof()) {
-
-                string linea = "";
-                fin.get(letra);
-                texto = texto + linea;
-            }
-            cout << texto<<endl;
-
-            string auxiliar="",texto_caracter= "";  // 01000001011000100100001101100100 A: 65, b:98, C:67, d:100
-
-            int semilla = 8, repeticiones =  texto.length()/ semilla,aguja = semilla,vector []= {128,64,32,16,8,4,2,1};
-            auxiliar = texto.substr(0,semilla);
-
-            for (int i = 0; i < repeticiones; i++){ //for principal
-                int resultado=0;
-
-                for (int j=0; j<8; j++) // 0100 0001 65   64+1 = 65
-                {
-                    if (auxiliar[j]== '1')
-                        resultado = resultado+vector [j];
-                }
-                auxiliar = "";
-                auxiliar= texto.substr(aguja, semilla);
-                aguja = aguja+semilla;
-                char caracter = resultado;
-                texto_caracter= texto_caracter + caracter ;
-
-                cout << "RESULTADO: "<<resultado<<endl;
-
-            } // for repeticiones
-
-            cout << texto_caracter<<endl;
-
-        }//opcion == 2
-
-
-        fin.close();
+        fin.open(nombre.c_str()); //Abre un archivo para lectura
+        while (!fin.eof()){
+            getline (fin,frase);
+            texto = texto + frase;
+        }
     }
-
     catch(char c)
     {
         if(c=='1')
@@ -135,27 +40,17 @@ void lectura ( string& pun_nombre,int metodo ,int semilla , int opcion)
         else
             cout<<"Error inesperado";
     }
-
-    cout << texto<<endl;cout <<"logitud texto"<< texto.length()<<endl;
-
-
-    codificacion (texto,metodo,semilla);
-
-
+cout << texto<<endl;
 }
 
 void codificacion (string& texto, int metodo ,int semilla)
 {
     string codificado = "";
-
     if (metodo == 1){   cout << "Metodo de codificacion 1.\n";
-
         string auxiliar = "";
-
         int repeticiones =  texto.length()/ semilla;
         int aguja = semilla,cantidad_ceros=0, cantidad_unos= 0;
         auxiliar = texto.substr(0,semilla);
-
         for (int k=0; k<semilla ; k++)// ciclo que cuenta los 1 y 0 en cadena auxiliar del primer bloque
         {
             if (auxiliar [k]== '1')
@@ -163,9 +58,9 @@ void codificacion (string& texto, int metodo ,int semilla)
             if (auxiliar [k] == '0')
                 cantidad_ceros++;
         }
-
         for (int i = 0; i < repeticiones; i++){ //for principal
-            if (i>1){
+            if (i>1)
+            {
                 cantidad_ceros=0, cantidad_unos= 0;
                 // ciclo que cuenta los 1 y 0 en cadena auxiliar
                 string cantidad = texto.substr((semilla*(i-1)),semilla);
@@ -175,8 +70,8 @@ void codificacion (string& texto, int metodo ,int semilla)
                         cantidad_unos++;
                     if (cantidad [k] == '0')
                         cantidad_ceros++;
-                }}
-
+                }
+            }
             if (cantidad_unos == cantidad_ceros || i == 0)
             {
                 for (int j = 0; j<semilla ; j++ )
@@ -187,7 +82,6 @@ void codificacion (string& texto, int metodo ,int semilla)
                         auxiliar [j] = '1';
                 }
             } // if cantida_unos == cantidad_ceros
-
             else  if  (cantidad_ceros >cantidad_unos )
             {
                 for (int j = 1; j<semilla ; j=j+2)
@@ -201,8 +95,6 @@ void codificacion (string& texto, int metodo ,int semilla)
                     }
                 }
             } // if cantidad_ceros >cantidad_unos
-
-
             else if (cantidad_unos > cantidad_ceros) // else
             {
                 for (int j = 2; j<semilla; j=j+3 )
@@ -212,27 +104,21 @@ void codificacion (string& texto, int metodo ,int semilla)
                     else if(auxiliar [j] == '0')
                         auxiliar [j] = '1';
                 }
-
             } //if cantidad_unos>cantidad_ceros
-
             codificado = codificado + auxiliar;
             auxiliar = "";
             auxiliar= texto.substr(aguja, semilla);
             aguja = aguja+semilla;
-
         } // for repeticiones
     } // metodo 1
 
     if (metodo == 2){cout << "Metodo de codificacion 2.\n";
-
         int repeticiones = texto.length()/ semilla,aguja = semilla;
         string auxiliar = "";
         auxiliar = texto.substr(0,semilla);string copia;
         for (int i = 0; i< repeticiones;i++){
-
             copia = auxiliar;
             char inicio = copia[semilla-1];
-
             for (int j = 0; j<= semilla-1;j++){
                 auxiliar [j+1]=copia[j]; // 1 0 _ 2 1 _ 3 2
                 if (j==0){
@@ -331,5 +217,53 @@ string decodificado = "";
     cout << "             123412341234123412341234"<<endl;
     cout << "texto        " <<texto<<endl;
     cout << "decodificado:"<<decodificado<<endl;
+}
+
+void binario_caracter (string& texto)
+{
+    string auxiliar="",texto_caracter= "";  // 01000001011000100100001101100100 A: 65, b:98, C:67, d:100
+    int semilla = 8, repeticiones =  texto.length()/ semilla,aguja = semilla,vector []= {128,64,32,16,8,4,2,1};
+    auxiliar = texto.substr(0,semilla);
+    for (int i = 0; i < repeticiones; i++){ //for principal
+        int resultado=0;
+        for (int j=0; j<8; j++) // 0100 0001 65   64+1 = 65
+        {
+            if (auxiliar[j]== '1')
+                resultado = resultado+vector [j];
+        }
+        auxiliar = "";
+        auxiliar= texto.substr(aguja, semilla);
+        aguja = aguja+semilla;
+        char caracter = resultado;
+        texto_caracter= texto_caracter + caracter ;
+    } // for repeticiones
+    cout << texto_caracter<<endl;
+}
+
+void caracter_binario (string& texto)
+{
+    int longitud_texto = texto.length();
+
+    string binario ="";
+    char letra;
+    for (int i =0; i<longitud_texto;i++)
+    {
+        string copia= "";
+        letra = texto [i];
+        int num = letra, vector[8] = {128,64,32,16,8,4,2,1};
+
+        for (int j=0; j <8;j++)
+        {
+            if (num >= vector [j])
+            {
+                copia = copia + '1';
+                num -=vector[j];
+            }
+            else
+                copia = copia + '0';
+        }
+        binario = binario + copia;
+    }
+cout <<"BINARIO: "<< binario <<endl;
 }
 
