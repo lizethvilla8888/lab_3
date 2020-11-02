@@ -4,7 +4,9 @@
 #include <cmath>
 
 using namespace std;
-void lectura (string,int,int);
+void lectura (string& nombre,int,int,int opcion);
+void codificacion (string& texto,int metodo ,int semilla) ;
+void decodificacion (string& texto, int metodo, int semilla);
 
 int main()
 {
@@ -20,7 +22,8 @@ int main()
         cout << "Ingrese opcion.\n";
         cin >> opcion;
 
-        switch (opcion) {
+        switch (opcion)
+        {
         case 1:
             system("cls"); //limpiar terminal
             int opc2=1;
@@ -35,44 +38,91 @@ int main()
                 cout << "0.Precione 0 para salir.\n"<<endl;
                 cout << "Ingrese metodo de codificacion:"<<endl;
                 cin >>metodo;
-
-                lectura(nombre,metodo,semilla);
+                lectura(nombre,metodo,semilla,opcion);
             }
-            break;
-        }
-    }
-return 0;
+            break ;
+
+            //FALTA DECODIFICACION Y ARRREGLAR MENU
+
+        }//switch
+    }//while opcion
+    return 0;
 }
 
-void lectura (string pun_nombre,int metodo ,int semilla)
+void lectura ( string& pun_nombre,int metodo ,int semilla , int opcion)
 {
+    /* lee archivo, crea string texto y copia en el todo el archivo, texto pasa a binario,
+         *
+         *
+         */
+
+
     ifstream fin; //leer un archivo
-    string texto="",codificado="";
+    string codificado="",texto = "";
     char letra;
 
     try
     {
         fin.open(pun_nombre.c_str()); //Abre un archivo para lectura   fin.open(pun_nombre.c_str());
-
         if (!fin.fail()){
             fin.get(letra);}
 
-        while (!fin.eof()){
-            int num = letra; string copia = "";
-
-            for (int j = 7;j>=0;j--){
-                if (num >= pow(2,j)){
-                    num -= pow (2,j);
-                    copia = copia + "1";
+        if (opcion == 1){
+            while (!fin.eof()){// convierte texto a binario
+                int num = letra; string copia = "";
+                for (int j = 7;j>=0;j--){
+                    if (num >= pow(2,j)){
+                        num -= pow (2,j);
+                        copia = copia + "1";
+                    }
+                    else
+                        copia = copia +"0";
                 }
-                else
-                    copia = copia +"0";
-            }           // cout << " " <<letra << " " <<copia <<" " ;
-            string linea = "";
-            linea = linea+copia;
-            fin.get(letra);
-            texto = texto + linea;
-        }
+                string linea = "";
+                linea = linea+copia;
+                fin.get(letra);
+                texto = texto + linea;
+            }
+        }//opcion == 1
+
+        if (opcion == 2)  { // binario a caracter
+
+            while (!fin.eof()) {
+
+                string linea = "";
+                fin.get(letra);
+                texto = texto + linea;
+            }
+            cout << texto<<endl;
+
+            string auxiliar="",texto_caracter= "";  // 01000001011000100100001101100100 A: 65, b:98, C:67, d:100
+
+            int semilla = 8, repeticiones =  texto.length()/ semilla,aguja = semilla,vector []= {128,64,32,16,8,4,2,1};
+            auxiliar = texto.substr(0,semilla);
+
+            for (int i = 0; i < repeticiones; i++){ //for principal
+                int resultado=0;
+
+                for (int j=0; j<8; j++) // 0100 0001 65   64+1 = 65
+                {
+                    if (auxiliar[j]== '1')
+                        resultado = resultado+vector [j];
+                }
+                auxiliar = "";
+                auxiliar= texto.substr(aguja, semilla);
+                aguja = aguja+semilla;
+                char caracter = resultado;
+                texto_caracter= texto_caracter + caracter ;
+
+                cout << "RESULTADO: "<<resultado<<endl;
+
+            } // for repeticiones
+
+            cout << texto_caracter<<endl;
+
+        }//opcion == 2
+
+
         fin.close();
     }
 
@@ -86,9 +136,22 @@ void lectura (string pun_nombre,int metodo ,int semilla)
             cout<<"Error inesperado";
     }
 
+    cout << texto<<endl;cout <<"logitud texto"<< texto.length()<<endl;
+
+
+    codificacion (texto,metodo,semilla);
+
+
+}
+
+void codificacion (string& texto, int metodo ,int semilla)
+{
+    string codificado = "";
+
     if (metodo == 1){   cout << "Metodo de codificacion 1.\n";
 
         string auxiliar = "";
+
         int repeticiones =  texto.length()/ semilla;
         int aguja = semilla,cantidad_ceros=0, cantidad_unos= 0;
         auxiliar = texto.substr(0,semilla);
@@ -160,35 +223,113 @@ void lectura (string pun_nombre,int metodo ,int semilla)
         } // for repeticiones
     } // metodo 1
 
-
-    if (metodo == 2){
-        cout << "Metodo de codificacion 2.\n";
+    if (metodo == 2){cout << "Metodo de codificacion 2.\n";
 
         int repeticiones = texto.length()/ semilla,aguja = semilla;
-
-        string auxiliar=""; auxiliar = texto.substr(0,semilla);string copia;
-
+        string auxiliar = "";
+        auxiliar = texto.substr(0,semilla);string copia;
         for (int i = 0; i< repeticiones;i++){
 
-             copia = auxiliar;
-             char inicio = copia[semilla-1];
+            copia = auxiliar;
+            char inicio = copia[semilla-1];
 
             for (int j = 0; j<= semilla-1;j++){
                 auxiliar [j+1]=copia[j]; // 1 0 _ 2 1 _ 3 2
                 if (j==0){
                     auxiliar [0]= inicio; }
-                  }
+            }
             codificado = codificado + auxiliar;
             auxiliar = "";
             auxiliar = texto.substr(aguja, semilla);
             aguja = aguja+semilla;
             inicio = copia [semilla-1];
-         }
-    }
-
+        }
+    } //metodo 2
     cout << "          :12341234123412341234123412341234"<<endl;
     cout << "TEXTO:     "<< texto<<endl;
     cout << "CODIFICADO:"<< codificado<<endl;
-
-
 }
+
+void decodificacion (string& texto, int metodo, int semilla)
+{
+string decodificado = "";
+
+    if (metodo == 1){   cout << "Metodo de decodificacion 1.\n";
+        string auxiliar = "";
+        int repeticiones =  texto.length()/ semilla;
+        int aguja = semilla,cantidad_ceros=0, cantidad_unos= 0;
+        auxiliar = texto.substr(0,semilla);  cout << "auxiliar"<<auxiliar<<endl;
+        for (int i = 0; i < repeticiones; i++)  { //for principal
+            if (cantidad_unos == cantidad_ceros || i == 0)
+            {
+                for (int j = 0; j<semilla ; j++ )
+                {
+                    if (auxiliar [j] == '1')
+                        auxiliar [j]= '0';
+                    else if(auxiliar [j] == '0')
+                        auxiliar [j] = '1';
+                }
+            } // if cantida_unos == cantidad_ceros
+            else  if  (cantidad_ceros >cantidad_unos )
+            {
+                for (int j = 1; j<semilla ; j=j+2)
+                {
+                    if (auxiliar [j] == '1')
+                        auxiliar [j]= '0';
+
+                    else if(auxiliar [j] == '0')
+                        auxiliar [j] = '1';
+                }
+            } // if cantidad_ceros >cantidad_unos
+            else if (cantidad_unos > cantidad_ceros) // else
+            {
+                for (int j = 2; j<semilla; j=j+3 )
+                {
+                    if (auxiliar [j] == '1')
+                        auxiliar [j]= '0';
+                    else if(auxiliar [j] == '0')
+                        auxiliar [j] = '1';
+                }
+            } //if cantidad_unos>cantidad_ceros
+            cantidad_ceros=0, cantidad_unos= 0;
+            // ciclo que cuenta los 1 y 0 en cadena auxiliar
+            for (int k=0; k<semilla ; k++)
+            {
+                if (auxiliar [k]== '1')
+                    cantidad_unos++;
+                if (auxiliar [k] == '0')
+                    cantidad_ceros++;
+            }
+            decodificado = decodificado + auxiliar;
+            auxiliar = "";
+            auxiliar= texto.substr(aguja, semilla);
+            aguja = aguja+semilla;
+        } // for repeticiones
+    } // if metodo == 1
+
+    if (metodo == 2)
+    {
+        string auxiliar = "",copia="";
+        int repeticiones =  texto.length()/ semilla;
+        int aguja = semilla;
+        auxiliar = texto.substr(0,semilla);
+        copia = auxiliar;
+        for (int i = 0; i < repeticiones; i++)  {
+            copia = auxiliar;
+            for (int j = 0; j<semilla;j++){
+                if (j != semilla-1)
+                auxiliar[j] = copia [j+1];
+                if (j == semilla-1)
+                    auxiliar[j] = copia[0];
+            }
+            decodificado = decodificado + auxiliar;
+            auxiliar = "";
+            auxiliar= texto.substr(aguja, semilla);
+            aguja = aguja+semilla;
+        }//for principal metodo 2
+   }
+    cout << "             123412341234123412341234"<<endl;
+    cout << "texto        " <<texto<<endl;
+    cout << "decodificado:"<<decodificado<<endl;
+}
+
