@@ -16,6 +16,7 @@ void menu_decodificacion ();
 void menu_app();
 int inicio_sesion(string&);
 
+
 int main()
 {
     int opcion1 = 1;
@@ -91,7 +92,7 @@ void menu_decodificacion ()
 
 void menu_app()
 {
-    string sudo="sudo.txt",usuario="usuario.txt";
+    string sudo="sudo.txt",nombre_archivo_usuario="usuario.txt";
 
     int opcion=1;
     while (opcion!=0)
@@ -134,7 +135,7 @@ void menu_app()
                         cout << "Ingresar Cedula:\n";
                         cin>>dato;  dato = dato +',';
                         int verificacion = 0;
-                        archivo_usuario = lectura(usuario);
+                        archivo_usuario = lectura(nombre_archivo_usuario);
                         archivo_usuario = decodificacion(archivo_usuario,2,4);
                         archivo_usuario = binario_caracter(archivo_usuario);
 
@@ -147,6 +148,9 @@ void menu_app()
                             nuevo = nuevo + dato +'.'+'\n';
 
                             archivo_usuario = archivo_usuario + nuevo;
+                            archivo_usuario = caracter_binario(archivo_usuario);
+                            archivo_usuario = codificacion(archivo_usuario,2,4);
+                            escritura(nombre_archivo_usuario,archivo_usuario);
 
                         }//(verificacion != -1)
 
@@ -166,13 +170,18 @@ void menu_app()
             break;
 
         case 2:
+            /*se lee archivo usuarios.txt y se guarda en variable archivo_usuario, luego se decodifica el archivo_usuario con
+             * metodo 2 y 4 particiones, archivo_usuario decodificado se pasa a caracteres, en este se busca verificacion
+             * (usuario y contrasena ingresados) pertenescan a un usuario registrado,  veri me dice si el dato verificacion esta en el archivo_usuario
+             * si esta se inicia sesion.
+             */
             cout << "********* USUARIO ********* \n";
-            archivo_usuario = lectura(usuario);
+            archivo_usuario = lectura(nombre_archivo_usuario);
             archivo_usuario = decodificacion(archivo_usuario,2,4);
             archivo_usuario = binario_caracter(archivo_usuario);
 
             int veri = 0;
-            string usuario,contrasena,verificacion = "";
+            string usuario="",contrasena="",verificacion = "";
             cout << "Ingrese nombre de usuario:\n";
             cin >> usuario;
             cout << "Ingrese contrasena:\n";
@@ -187,28 +196,38 @@ void menu_app()
                 cout << "usuario y contrasena errada.\n";
             if (veri != -1)
             {
-                string usuario_saldo, inicio="",fin="";
-                usuario_saldo = archivo_usuario.substr(veri,archivo_usuario.length());
-                int  saldo,longitud_verificacion = verificacion.length();
-                saldo = usuario_saldo.find('.');
-                saldo = saldo - longitud_verificacion;
-                usuario_saldo = archivo_usuario.substr(longitud_verificacion,saldo);
-                saldo = stoi(usuario_saldo);
-                saldo = saldo - 1000;
-
-                inicio =  archivo_usuario.substr(0,veri);
-                fin = archivo_usuario.substr(longitud_verificacion+veri+usuario_saldo.length()+1,veri+longitud_verificacion);
+                int eso = archivo_usuario.length()-verificacion.length();
+                string datos_usuario,datos_antes_de_usuario="",datos_despues_de_usuario="",saldo_char;
+                datos_usuario = archivo_usuario.substr(veri, eso) ;
+                eso =  datos_usuario.find('.');
+                datos_usuario = archivo_usuario.substr(veri,eso);
+                datos_antes_de_usuario = archivo_usuario.substr(0,veri);
+                datos_despues_de_usuario = archivo_usuario.substr(veri+eso,archivo_usuario.length()-(veri+eso));
+                int saldo_int;
+                saldo_int = datos_usuario.find(contrasena);
+                saldo_int = saldo_int + contrasena.length();
+                saldo_char = datos_usuario.substr(saldo_int+1);
+                saldo_int = stoi (saldo_char);
+                saldo_int = saldo_int -1000;
 
                 int opcion1=1;
                 while (opcion1 !=0){
-                    cout << "\n********* BIENVENIDO "<<usuario <<"*********\n";
+                    cout << "\n********* BIENVENIDO  "<<usuario <<" *********\n";
                     cout << " 1. Consultar saldo.\n 2. Retirar dinero.\n 3. salir.\n";
                     cin>> opcion1;
                     switch (opcion1)
                     {
                     case 1:
                         cout << " 1. Consultar saldo.\n\n";
-                        cout << "Su saldo es :" <<saldo<<endl;
+                        cout << "su saldo es:"<< saldo_int;
+
+                        saldo_char = to_string (saldo_int);
+                        datos_usuario = usuario + ','+contrasena+','+saldo_char;
+                        archivo_usuario = datos_antes_de_usuario + datos_usuario + datos_despues_de_usuario;
+                        archivo_usuario = caracter_binario(archivo_usuario);
+                        archivo_usuario = codificacion(archivo_usuario,2,4);
+                        escritura(nombre_archivo_usuario,archivo_usuario);
+
                         break;
 
                     case 2:
@@ -216,21 +235,22 @@ void menu_app()
                         int retiro;
                         cout << "ingrese cantidad de dinero que desea retirar:\n";
                         cin >> retiro;
-                        if (retiro > saldo )
+                        if (retiro>saldo_int)
                             cout << "No se puede realizar retiro \n Saldo insuficiente\n";
-                        else if (retiro < saldo){
-                            saldo = saldo - retiro;
-                            cout << "Saldo:" << saldo<<endl;
+
+                        else if (retiro < saldo_int){
+                            saldo_int = saldo_int - retiro;
+                            cout << "Saldo:" << saldo_int<<endl;
+
+
+                            saldo_char = to_string (saldo_int);
+                            datos_usuario = usuario + ','+contrasena+','+saldo_char;
+                            archivo_usuario = datos_antes_de_usuario + datos_usuario + datos_despues_de_usuario;
+                            archivo_usuario = caracter_binario(archivo_usuario);
+                            archivo_usuario = codificacion(archivo_usuario,2,4);
+                            escritura(nombre_archivo_usuario,archivo_usuario);
                         }
                         break;
-
-                    case 3:
-                        usuario_saldo= to_string(saldo);
-                        verificacion = verificacion + usuario_saldo + '.';
-                        archivo_usuario = inicio + verificacion + fin;
-                        codificacion(archivo_usuario,2,4);
-                        escritura(usuario,archivo_usuario);
-                        opcion1 = 0;
 
                     default:
                         cout <<"La opcion ingresada no es valida\n";
@@ -523,4 +543,3 @@ if (escribir.fail())
 }
 escribir<< texto;
 }
-
