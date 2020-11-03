@@ -149,7 +149,7 @@ void menu_app()
                     nuevo = dato;
                     cout << "ingrese clave y saldo separados por (,).\n";
                     cin>> dato;
-                    nuevo = nuevo + dato +'\n';
+                    nuevo = nuevo + dato +'.'+'\n';
 
                     archivo_usuario = archivo_usuario + nuevo;
 
@@ -192,33 +192,55 @@ void menu_app()
             cout << "usuario y contrasena errada.\n";
         if (veri != -1)
         {
-             string datos_usuario= "";string saldo;
-             int longitud_usuario_contrasena = verificacion.length();
+             string usuario_saldo;
+             usuario_saldo = archivo_usuario.substr(veri,archivo_usuario.length());
+             int  saldo,longitud_verificacion = verificacion.length();
+             saldo = usuario_saldo.find('.');
+
+             cout << "archivo usuario:"<<archivo_usuario<<endl;
+
+             saldo = saldo - longitud_verificacion;
+             cout<< "1 saldo:"<< saldo<<endl;
 
 
 
+             usuario_saldo = archivo_usuario.substr(longitud_verificacion,saldo);
 
-             datos_usuario ;
+             cout << "usuario salgo "<<usuario_saldo<<endl;
 
+             cout<< "2 saldo:"<< saldo<<endl;
+
+             saldo = stoi(usuario_saldo);
+             saldo = saldo - 1000;
+
+             cout<< "3 saldo:"<< saldo<<endl;
 
             int opcion1=1;
             while (opcion1 !=0){
             cout << "********* BIENVENIDO "<<usuario <<"*********\n";
-            cout << " 1. Consultar saldo.\n 2. Retirar dinero.\n 0. salir.";
+            cout << " 1. Consultar saldo.\n 2. Retirar dinero.\n 0. salir.\n";
             cin>> opcion1;
 
             switch (opcion1)
             {
             case 1:
-                cout << " 1. Consultar saldo.\n";
+                cout << " 1. Consultar saldo.\n\n";
+                cout << "Su saldo es :" <<saldo<<endl;
 
-
-
+                // ELIMINAR DE ARCHIVO_USUARIO LOS DATOS VIEJOS Y AGEGAR SALDO NUEVO
                 break;
 
             case 2:
                 cout << "2. Retirar dinero.";
-
+                int retiro;
+                cout << "ingrese cantidad de dinero que desea retirar:\n";
+                cin >> retiro;
+                if (retiro > saldo )
+                    cout << "No se puede realizar retiro \n Saldo insuficiente\n";
+                else if (retiro < saldo){
+                    saldo = saldo - retiro;
+                    cout << "Saldo:" << saldo;
+                }
                 break;
 
 
