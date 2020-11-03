@@ -4,22 +4,262 @@
 #include <cmath>
 
 using namespace std;
-void lectura (string& nombre);
-void codificacion (string& texto,int metodo ,int semilla) ;
-void decodificacion (string& texto, int metodo, int semilla);
-void binario_caracter (string& texto);
-void caracter_binario (string& texto);
 
+string lectura (string& nombre);
+string codificacion (string& texto,int metodo ,int semilla) ;
+string decodificacion (string& texto, int metodo, int semilla);
+string  binario_caracter (string& texto);
+string caracter_binario (string& texto);
+void escritura (string&,string&);
+
+
+void menu_codificacion ();
+void menu_decodificacion ();
+void menu_app();
+
+int inicio_sesion(string&);
 
 int main()
 {
+    int opcion1 = 1;
+    while (opcion1 != 0)
+    {
+        system("cls");
+        cout<<"***** Practica 3 *****\n"<<endl;
+        cout<<"seleccione una opcion \n"<<endl;
+        cout<<"1) Codificacion."<<endl;
+        cout<<"2) Decodificacion."<<endl;
+        cout<<"3) Aplicacion. "<<endl;
+        cout<<"\n Presione 0 para salir"<<endl;
+        cin>>opcion1;
+
+        switch (opcion1)
+        {
+        case 1:
+            menu_codificacion();
+            break;
+
+        case 2:
+            menu_decodificacion ();
+            break;
+
+        case 3:
+            menu_app();
+            break;
+
+        default:
+            cout <<"La opcion ingresada no es valida\n";
+            break;
+
+        } //switch
+    }//while opcion1
+
+} // main
+
+void menu_codificacion ()
+{
+    int metodo=0,semilla=0; string nombre="",texto="";string verificacion = "";
+    system("cls");
+    cout << "***** CODIFICACION *****\n"<<"Problema 1"<<endl;
+    cout << "Ingrese nombre de texto a codificar:"<<endl;
+    cin>>nombre;
+    cout << "Ingrese numero de particiones:"<<endl;
+    cin >> semilla;
+    texto = lectura(nombre);
+    texto = caracter_binario(texto);
+    cout<<"seleccione una opcion \n"<<endl;
+    cout<<"1) Codificacion metodo 1."<<endl;
+    cout<<"2) Codificacion metodo 2."<<endl;
+    cin >> metodo;
+    texto = codificacion ( texto, metodo , semilla);
+    escritura(nombre,texto);
+}
+
+void menu_decodificacion ()
+{
+    int metodo=0,semilla=0; string nombre="",texto="";string verificacion = "";
+    system("cls");
+    cout << "***** DECODIFICACION *****\n"<<"Problema 1"<<endl;
+    cout << "Ingrese nombre de texto.txt a decodificar:"<<endl;
+    cin>>nombre;
+    cout << "Ingrese numero de particiones:"<<endl;
+    cin >> semilla;
+    cout << "Ingrese metodo de decodificacion:"<<endl;
+    cin >> metodo;
+    texto = lectura(nombre);
+    texto = decodificacion ( texto, metodo,  semilla);
+    texto = binario_caracter(texto);
+    escritura(nombre,texto);
+}
+
+void menu_app()
+{
+    string sudo="sudo.txt",usuario="usuario.txt";
+
+    int opcion=1;
+
+
+    while (opcion!=0)
+    {
+    int veri = 0;
+    string archivo_sudo="", archivo_usuario="";
+    cout << "***** APLICACION *****\n\n"<<endl;
+    cout<<"seleccione una opcion \n"<<endl;
+    cout<<"1) Inicio Administrador."<<endl;
+    cout<<"2) Inicio Usuario."<<endl;
+    cout<< "0) Salir.\n";
+    cin >> opcion;
+
+    switch (opcion)
+        {
+        case 1:
+        cout << "ADMINISTRADOR\n";
+        archivo_sudo = lectura(sudo);
+        archivo_sudo = decodificacion(archivo_sudo,2,4);
+        archivo_sudo = binario_caracter(archivo_sudo);
+        veri = inicio_sesion(archivo_sudo);
+
+        if (veri == -1)
+            cout << "usuario y contrasena errada.\n";
+
+        if (veri != -1)
+        {
+            int opcion1 = 1;
+        while (opcion1 !=0 )
+        {
+            cout << "********* BIENVENIDO ADMINISTRADOR*********\n";
+            cout << "1) Ingresar nuevo usuario.\n";
+            cout << "0) Salir.\n";
+            string dato = "",nuevo = "";
+            cin >> opcion1;
+
+            switch (opcion1)
+            {
+            case 1:
+                cout << "Ingresar Cedula:\n";
+                cin>>dato;  dato = dato +',';
+                int verificacion = 0;
+                archivo_usuario = lectura(usuario);
+                archivo_usuario = decodificacion(archivo_usuario,2,4);
+                archivo_usuario = binario_caracter(archivo_usuario);
+
+                verificacion = archivo_usuario.find(dato);
+                if (verificacion == -1)
+                {
+                    nuevo = dato;
+                    cout << "ingrese clave y saldo separados por (,).\n";
+                    cin>> dato;
+                    nuevo = nuevo + dato +'\n';
+
+                    archivo_usuario = archivo_usuario + nuevo;
+
+                }//(verificacion != -1)
+
+                else if (verificacion != -1)
+                    cout << "usuario ya se encuentra registrado.\n";
+
+                break;
+
+           /* default:
+                cout << "la opcion no es valida.\n";
+                break;*/
+
+            }//switch (opcion1)
+
+        } // while opcion1 != 0
+
+        }//if veri != -1
+            break;
+
+        case 2:
+        cout << "********* USUARIO ********* \n";
+        archivo_usuario = lectura(usuario);
+        archivo_usuario = decodificacion(archivo_usuario,2,4);
+        archivo_usuario = binario_caracter(archivo_usuario);
+
+        int veri = 0;
+           string usuario,contrasena,verificacion = "";
+           cout << "Ingrese nombre de usuario:\n";
+           cin >> usuario;
+           cout << "Ingrese contrasena:\n";
+           cin >> contrasena;
+           verificacion = usuario +','+ contrasena + ',';
+
+           veri = archivo_usuario.find(verificacion);
+
+
+        if (veri == -1)
+            cout << "usuario y contrasena errada.\n";
+        if (veri != -1)
+        {
+             string datos_usuario= "";string saldo;
+             int longitud_usuario_contrasena = verificacion.length();
+
+
+
+
+             datos_usuario ;
+
+
+            int opcion1=1;
+            while (opcion1 !=0){
+            cout << "********* BIENVENIDO "<<usuario <<"*********\n";
+            cout << " 1. Consultar saldo.\n 2. Retirar dinero.\n 0. salir.";
+            cin>> opcion1;
+
+            switch (opcion1)
+            {
+            case 1:
+                cout << " 1. Consultar saldo.\n";
+
+
+
+                break;
+
+            case 2:
+                cout << "2. Retirar dinero.";
+
+                break;
+
+
+            default:
+                cout <<"La opcion ingresada no es valida\n";
+                break;
+
+            } //switch
+
+            }//  (opcion1 !=0)
+
+        }//(veri != -1)
+ break;
+
+       /* default:
+            cout <<"La opcion ingresada no es valida\n";
+            break;*/
+
+        } //switch
+
+
+
+    } // while pricipal
 
 }
 
+int  inicio_sesion(string& texto)
+{
+   int veri = 0;
+   string usuario,contrasena,verificacion = "";
+   cout << "Ingrese nombre de usuario:\n";
+   cin >> usuario;
+   cout << "Ingrese contrasena:\n";
+   cin >> contrasena;
+   verificacion = usuario +','+ contrasena + '\n';
+   veri = texto.find(verificacion);
 
+   return veri;
+}
 
-
-void lectura (string& nombre)
+string lectura (string& nombre)
 {
     ifstream fin; //leer un archivo
     string frase,texto = "";
@@ -28,6 +268,7 @@ void lectura (string& nombre)
         fin.open(nombre.c_str()); //Abre un archivo para lectura
         while (!fin.eof()){
             getline (fin,frase);
+            frase = frase + '\n';
             texto = texto + frase;
         }
     }
@@ -40,10 +281,10 @@ void lectura (string& nombre)
         else
             cout<<"Error inesperado";
     }
-cout << texto<<endl;
+    return texto;
 }
 
-void codificacion (string& texto, int metodo ,int semilla)
+string codificacion (string& texto, int metodo ,int semilla)
 {
     string codificado = "";
     if (metodo == 1){   cout << "Metodo de codificacion 1.\n";
@@ -112,7 +353,7 @@ void codificacion (string& texto, int metodo ,int semilla)
         } // for repeticiones
     } // metodo 1
 
-    if (metodo == 2){cout << "Metodo de codificacion 2.\n";
+    if (metodo == 2){cout << "***** Metodo de codificacion 2. *****\n";
         int repeticiones = texto.length()/ semilla,aguja = semilla;
         string auxiliar = "";
         auxiliar = texto.substr(0,semilla);string copia;
@@ -131,16 +372,15 @@ void codificacion (string& texto, int metodo ,int semilla)
             inicio = copia [semilla-1];
         }
     } //metodo 2
-    cout << "          :12341234123412341234123412341234"<<endl;
-    cout << "TEXTO:     "<< texto<<endl;
-    cout << "CODIFICADO:"<< codificado<<endl;
+
+    return codificado;
 }
 
-void decodificacion (string& texto, int metodo, int semilla)
+string decodificacion (string& texto, int metodo, int semilla)
 {
-string decodificado = "";
+    string decodificado = "";
 
-    if (metodo == 1){   cout << "Metodo de decodificacion 1.\n";
+    if (metodo == 1){   cout << "***** Metodo de decodificacion 1. *****\n\n";
         string auxiliar = "";
         int repeticiones =  texto.length()/ semilla;
         int aguja = semilla,cantidad_ceros=0, cantidad_unos= 0;
@@ -204,7 +444,7 @@ string decodificado = "";
             copia = auxiliar;
             for (int j = 0; j<semilla;j++){
                 if (j != semilla-1)
-                auxiliar[j] = copia [j+1];
+                    auxiliar[j] = copia [j+1];
                 if (j == semilla-1)
                     auxiliar[j] = copia[0];
             }
@@ -213,13 +453,12 @@ string decodificado = "";
             auxiliar= texto.substr(aguja, semilla);
             aguja = aguja+semilla;
         }//for principal metodo 2
-   }
-    cout << "             123412341234123412341234"<<endl;
-    cout << "texto        " <<texto<<endl;
-    cout << "decodificado:"<<decodificado<<endl;
+    }
+
+    return decodificado;
 }
 
-void binario_caracter (string& texto)
+string binario_caracter (string& texto)
 {
     string auxiliar="",texto_caracter= "";  // 01000001011000100100001101100100 A: 65, b:98, C:67, d:100
     int semilla = 8, repeticiones =  texto.length()/ semilla,aguja = semilla,vector []= {128,64,32,16,8,4,2,1};
@@ -237,10 +476,11 @@ void binario_caracter (string& texto)
         char caracter = resultado;
         texto_caracter= texto_caracter + caracter ;
     } // for repeticiones
-    cout << texto_caracter<<endl;
+
+    return texto_caracter;
 }
 
-void caracter_binario (string& texto)
+string caracter_binario (string& texto)
 {
     int longitud_texto = texto.length();
 
@@ -264,6 +504,19 @@ void caracter_binario (string& texto)
         }
         binario = binario + copia;
     }
-cout <<"BINARIO: "<< binario <<endl;
+    return binario;
+}
+
+void escritura (string& nombre, string& texto)
+{
+ofstream escribir;
+escribir.open(nombre.c_str(),ios::out);
+
+if (escribir.fail())
+{
+    cout << "No se pudo abrir el archivo.\n";
+    exit(1);
+}
+escribir<< texto;
 }
 
