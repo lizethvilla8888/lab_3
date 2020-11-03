@@ -152,7 +152,6 @@ void menu_app()
 
                         else if (verificacion != -1)
                             cout << "usuario ya se encuentra registrado.\n";
-
                         break;
 
                         /* default:
@@ -247,13 +246,8 @@ void menu_app()
             /* default:
             cout <<"La opcion ingresada no es valida\n";
             break;*/
-
         } //switch
-
-
-
     } // while pricipal
-
 }
 
 int  inicio_sesion(string& texto)
@@ -266,7 +260,6 @@ int  inicio_sesion(string& texto)
     cin >> contrasena;
     verificacion = usuario +','+ contrasena + '\n';
     veri = texto.find(verificacion);
-
     return veri;
 }
 
