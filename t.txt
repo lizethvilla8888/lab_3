@@ -1,0 +1,17 @@
+En App codificacion esta dada por metodo 2, semilla 4.
+
+sudo.txt
+
+admin1,123
+admin2,123
+admin3,123
+admin4,123
+
+usuario.txt
+
+1017267494,miclave,10000.
+1017201589,123,20000.
+43415208,miclave,44000.
+123456789,123,15500.
+
+
